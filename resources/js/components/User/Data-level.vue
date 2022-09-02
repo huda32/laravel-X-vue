@@ -5,22 +5,23 @@
                 <div class="card">
                     <div class="card-header">Data Level yang ada</div>
                     <div class="card-body">
-                        <div class="table table-responsive">
-                            <table class="table">
-                                <tr>
-                                    <th>Nama Level</th>
-                                    <th>Aksi</th>
-                                </tr>
-                                <tr v-for="item in levels" :key="item.message">
-                                    <td> {{item.namalevel}}</td>
-                                    <td>Edit | Hapus</td>
-                                </tr>
-                            </table>
-
+                        <div class="form-group">
+                            <div class="table table-responsive">
+                                <table class="table">
+                                    <tr>
+                                        <th>Nama Level</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                    <tr v-for="item in levels" :key="item.id">
+                                        <td> {{item.namalevel}}</td>
+                                        <td>Edit | Hapus</td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> 
         </div>
     </div>
 </template>
