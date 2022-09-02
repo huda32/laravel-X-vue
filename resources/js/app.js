@@ -8,6 +8,20 @@ require('./bootstrap');
 
 window.Vue = require('vue').default;
 
+// import { vue } from 'laravel-mix';
+// import {Form, HasError, AlertError} from 'vform';
+import {
+    Button,
+    HasError,
+    AlertError,
+    AlertErrors,
+    AlertSuccess
+  } from 'vform/src/components/bootstrap5'
+// window.Form = Form;
+Vue.component(HasError.name, HasError);
+Vue.component(AlertError.name, AlertError);
+
+
 import Vue from 'vue';
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
