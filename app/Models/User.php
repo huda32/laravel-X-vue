@@ -19,6 +19,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'level_id',
         'email',
         'password',
     ];
@@ -41,4 +42,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    public function level(){
+        return $this->belongsTo(Level::class);
+    }
+
 }

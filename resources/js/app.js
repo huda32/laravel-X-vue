@@ -10,15 +10,18 @@ window.Vue = require('vue').default;
 
 // import { vue } from 'laravel-mix';
 // import {Form, HasError, AlertError} from 'vform';
+// window.Form = Form;
+
 import {
-   
     Button,
     HasError,
     AlertError,
     AlertErrors,
     AlertSuccess
   } from 'vform/src/components/bootstrap5'
-// window.Form = Form;
+//ternyata Form terpisah
+import Form from 'vform'
+window.Form = Form
 Vue.component(HasError.name, HasError);
 Vue.component(AlertError.name, AlertError);
 
