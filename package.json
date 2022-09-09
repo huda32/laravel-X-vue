@@ -29,6 +29,7 @@
         "admin-lte": "^3.0.0-alpha.2",
         "sweetalert2": "^11.4.32",
         "vform": "^2.1.2",
+        "vue-progressbar": "^0.7.5",
         "vue-router": "^3.6.4"
     }
 }

@@ -44,7 +44,7 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <input type="text" v-model="form.name" class="form-control" placeholder="Nama Pengguna"
-                            :class="{ 'is-invalid' : form.errors.has('name')}" required/>
+                            :class="{ 'is-invalid' : form.errors.has('name')}" />
                             <has-error :form="form" field="name"></has-error>
                         </div>
                         <div class="form-group">
@@ -69,7 +69,11 @@
                 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button 
+                        type="submit" 
+                        class="btn btn-primary" 
+                        :disabled="disable">
+                        <i v-show="loading" class="fa fa-spinner fa-spin"></i> Simpan</button>
                 </div>
             </form>
                 </div>
@@ -82,6 +86,8 @@
     export default {
         data(){
             return{
+                    loading:false,
+                    disable:false,
                 levels: {},
                 users:{},
                 form: new Form({
@@ -100,20 +106,30 @@
                 $("#modalMuncul").modal("show");
             },
             loadData(){
+                this.$Progress.start();
                 axios.get('api/ambildatalevel').then(({data}) => (this.levels= data));
                 axios.get('api/ambildatauser').then(({data}) => (this.users= data));
+                this.$Progress.finish();
             },
             simpanData(){
-                this.form.post('api/create_user').then(() =>{
+                    this.loading = true;
+                    this.disable = true;
+                this.form
+                    .post('api/create_user').then(() =>{
                     Fire.$emit("refreshData");
                     $("#modalMuncul").modal("hide");
                     Toast.fire({
                     icon: 'success',
                     title: 'Data Sukses Terinput'
                 });
-                    
+                    this.loading = false;
+                    this.disable = false;
+
                 })
-                .catch();
+                .catch(() =>{
+                    this.loading = false;
+                    this.disable = false;
+                });
             }
         },
         created(){ //New Index Data
