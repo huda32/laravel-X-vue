@@ -25,7 +25,22 @@ window.Form = Form
 Vue.component(HasError.name, HasError);
 Vue.component(AlertError.name, AlertError);
 
+//sebagai refresh Otomatis
+let Fire = new Vue();
+window.Fire = Fire;
 
+//Import Sweet Alert
+import Swal from 'sweetalert2'
+window.Swal = Swal;
+const Toast = Swal.mixin({
+    toast : true,
+    position : 'top-end',
+    showConfirmButton: false,
+    timer: 3000
+});
+window.Toast = Toast;
+
+//Import Vue
 import Vue from 'vue';
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)

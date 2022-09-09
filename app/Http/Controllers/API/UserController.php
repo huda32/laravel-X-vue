@@ -38,6 +38,14 @@ class UserController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
+        $this->validate($request, [
+            'name' => 'required |string|max:30',
+            'level_id' => 'required|integer',
+            'email' => 'required|string|max:50',
+            'password' => 'required|string|max:50'
+            
+        ]);
+
         return User::create([
             'name' => $request->name,
             'level_id' => $request->level_id,

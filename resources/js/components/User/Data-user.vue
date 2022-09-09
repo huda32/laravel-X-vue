@@ -43,19 +43,27 @@
                 <form @submit.prevent="simpanData()">
                     <div class="modal-body">
                         <div class="form-group">
-                            <input type="text" v-model="form.name" class="form-control" placeholder="Nama Pengguna">
+                            <input type="text" v-model="form.name" class="form-control" placeholder="Nama Pengguna"
+                            :class="{ 'is-invalid' : form.errors.has('name')}" required/>
+                            <has-error :form="form" field="name"></has-error>
                         </div>
                         <div class="form-group">
-                        <select class="form-control select2" v-model="form.level_id">
+                        <select class="form-control select2" v-model="form.level_id" 
+                            :class="{ 'is-invalid' : form.errors.has('level_id') }" >
                             <option value >Pilih Level</option>
                             <option v-for="item in levels" :key="item.id" :value="item.id">{{item.namalevel}}</option>
                         </select>
+                        <has-error :form="form" field="level_id"></has-error>
                         </div>
                         <div class="form-group">
-                            <input type="text" v-model="form.email" class="form-control" placeholder="Email">
+                            <input type="text" v-model="form.email" class="form-control" placeholder="Email"
+                            :class="{ 'is-invalid' : form.errors.has('email')}"/>
+                            <has-error :form="form" field="email"></has-error>
                         </div>
                         <div class="form-group">
-                            <input type="text" v-model="form.password" class="form-control" placeholder="Password">
+                            <input type="text" v-model="form.password" class="form-control" placeholder="Password"
+                            :class="{ 'is-invalid' : form.errors.has('password')}"/>
+                            <has-error :form="form" field="password"></has-error>
                         </div>
                     </div>
                 
@@ -88,7 +96,7 @@
         },
         methods:{
             showModal(){
-                this.form.reset();
+                this.form.reset();//mengkosongkan modal ketika modal akan ditampilan
                 $("#modalMuncul").modal("show");
             },
             loadData(){
@@ -97,13 +105,23 @@
             },
             simpanData(){
                 this.form.post('api/create_user').then(() =>{
+                    Fire.$emit("refreshData");
                     $("#modalMuncul").modal("hide");
+                    Toast.fire({
+                    icon: 'success',
+                    title: 'Data Sukses Terinput'
+                });
+                    
                 })
                 .catch();
             }
         },
-        created(){
+        created(){ //New Index Data
             this.loadData();
+            Fire.$on("refreshData", () => {
+                this.loadData();
+            });
         }
     }
+
 </script>
