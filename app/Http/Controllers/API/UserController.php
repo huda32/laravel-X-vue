@@ -85,7 +85,23 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'name' => 'required |string|max:30',
+            'level_id' => 'required|integer',
+            'email' => 'required|string|max:50',
+            'password' => 'required|string|max:50'
+            
+        ]);
+        $dtPengguna = [
+            'name' => $request->name,
+            'level_id' => $request->level_id,
+            'email' => $request->email,
+            'password' => bcrypt($request->password)
+        ];
+
+        $ubahData = User::findOrFail($id);
+        $ubahData->update($dtPengguna);
+
     }
 
     /**
@@ -96,6 +112,8 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+       $hapus=User::findOrFail($id);
+       $hapus->delete();
+
     }
 }

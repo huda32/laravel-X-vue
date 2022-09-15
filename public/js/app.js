@@ -2262,6 +2262,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -2269,6 +2279,8 @@ __webpack_require__.r(__webpack_exports__);
       disable: false,
       levels: {},
       users: {},
+      //untuk mendeteksi modal yang digunakan
+      statusModal: false,
       form: new Form({
         id: "",
         name: "",
@@ -2278,11 +2290,20 @@ __webpack_require__.r(__webpack_exports__);
       })
     };
   },
+  //jika akan membuat fungsi baru harus di dalam methods
   methods: {
     showModal: function showModal() {
+      this.statusModal = false;
       this.form.reset(); //mengkosongkan modal ketika modal akan ditampilan
 
       $("#modalMuncul").modal("show");
+    },
+    showModalEdit: function showModalEdit(item) {
+      this.statusModal = true;
+      this.form.reset(); //mengkosongkan modal ketika modal akan ditampilan
+
+      $("#modalMuncul").modal("show");
+      this.form.fill(item);
     },
     loadData: function loadData() {
       var _this = this;
@@ -2301,6 +2322,7 @@ __webpack_require__.r(__webpack_exports__);
     simpanData: function simpanData() {
       var _this2 = this;
 
+      this.$Progress.start();
       this.loading = true;
       this.disable = true;
       this.form.post('api/create_user').then(function () {
@@ -2310,21 +2332,73 @@ __webpack_require__.r(__webpack_exports__);
           icon: 'success',
           title: 'Data Sukses Terinput'
         });
+
+        _this2.$Progress.start();
+
         _this2.loading = false;
         _this2.disable = false;
       })["catch"](function () {
+        _this2.$Progress.fail();
+
         _this2.loading = false;
         _this2.disable = false;
+      });
+    },
+    ubahData: function ubahData() {
+      var _this3 = this;
+
+      this.$Progress.start();
+      this.loading = true;
+      this.disable = true;
+      this.form.put("api/edit_user/" + this.form.id).then(function () {
+        Fire.$emit("refreshData");
+        $("#modalMuncul").modal("hide");
+        Toast.fire({
+          icon: 'success',
+          title: 'Data Sukses Ter Update'
+        });
+
+        _this3.$Progress.start();
+
+        _this3.loading = false;
+        _this3.disable = false;
+      })["catch"](function () {
+        _this3.$Progress.fail();
+
+        _this3.loading = false;
+        _this3.disable = false;
+      });
+    },
+    hapusData: function hapusData(id) {
+      var _this4 = this;
+
+      Swal.fire({
+        title: "Anda yakin akan melakukan hapus pada data ini",
+        text: " Klik Batal untuk melakukan penghapusan data",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "d33",
+        confirmButtonText: "Hapus"
+      }).then(function (result) {
+        if (result.value) {
+          _this4.form["delete"]("api/hapus_user/" + id).then(function () {
+            Swal.fire("Terhapus", "Data Anda Sudah Terhapus", "success");
+            Fire.$emit("refreshData");
+          })["catch"](function () {
+            Swal.fire("Gagal", "Data Gagal Terhapus", "Warning");
+          });
+        }
       });
     }
   },
   created: function created() {
-    var _this3 = this;
+    var _this5 = this;
 
     //New Index Data
     this.loadData();
     Fire.$on("refreshData", function () {
-      _this3.loadData();
+      _this5.loadData();
     });
   }
 });
@@ -43253,7 +43327,33 @@ var render = function () {
                       _vm._v(" "),
                       _c("td", [_vm._v(" " + _vm._s(item.email))]),
                       _vm._v(" "),
-                      _c("td", [_vm._v("Edit | Hapus")]),
+                      _c("td", [
+                        _c(
+                          "a",
+                          {
+                            attrs: { href: "#" },
+                            on: {
+                              click: function ($event) {
+                                return _vm.showModalEdit(item)
+                              },
+                            },
+                          },
+                          [_c("i", { staticClass: "fas fa-edit blue" })]
+                        ),
+                        _vm._v("\n                                    | "),
+                        _c(
+                          "a",
+                          {
+                            attrs: { href: "#" },
+                            on: {
+                              click: function ($event) {
+                                return _vm.hapusData(item.id)
+                              },
+                            },
+                          },
+                          [_c("i", { staticClass: "fas fa-trash-alt red" })]
+                        ),
+                      ]),
                     ])
                   }),
                 ],
@@ -43286,7 +43386,43 @@ var render = function () {
           },
           [
             _c("div", { staticClass: "modal-content" }, [
-              _vm._m(1),
+              _c("div", { staticClass: "modal-header" }, [
+                _c(
+                  "h5",
+                  {
+                    directives: [
+                      {
+                        name: "show",
+                        rawName: "v-show",
+                        value: !_vm.statusModal,
+                        expression: "!statusModal",
+                      },
+                    ],
+                    staticClass: "modal-title",
+                    attrs: { id: "exampleModalLongTitle" },
+                  },
+                  [_vm._v("Tambah Pengguna")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "h5",
+                  {
+                    directives: [
+                      {
+                        name: "show",
+                        rawName: "v-show",
+                        value: _vm.statusModal,
+                        expression: "statusModal",
+                      },
+                    ],
+                    staticClass: "modal-title",
+                    attrs: { id: "exampleModalLongTitle" },
+                  },
+                  [_vm._v("Ubah User")]
+                ),
+                _vm._v(" "),
+                _vm._m(1),
+              ]),
               _vm._v(" "),
               _c(
                 "form",
@@ -43294,7 +43430,7 @@ var render = function () {
                   on: {
                     submit: function ($event) {
                       $event.preventDefault()
-                      return _vm.simpanData()
+                      _vm.statusModal ? _vm.ubahData() : _vm.simpanData()
                     },
                   },
                 },
@@ -43484,7 +43620,45 @@ var render = function () {
                     _c(
                       "button",
                       {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: !_vm.statusModal,
+                            expression: "!statusModal",
+                          },
+                        ],
                         staticClass: "btn btn-primary",
+                        attrs: { type: "submit", disabled: _vm.disable },
+                      },
+                      [
+                        _c("i", {
+                          directives: [
+                            {
+                              name: "show",
+                              rawName: "v-show",
+                              value: _vm.loading,
+                              expression: "loading",
+                            },
+                          ],
+                          staticClass: "fa fa-spinner fa-spin",
+                        }),
+                        _vm._v(" Simpan"),
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: _vm.statusModal,
+                            expression: "statusModal",
+                          },
+                        ],
+                        staticClass: "btn btn-success",
                         attrs: { type: "submit", disabled: _vm.disable },
                       },
                       [
@@ -43531,26 +43705,18 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-header" }, [
-      _c(
-        "h5",
-        { staticClass: "modal-title", attrs: { id: "exampleModalLongTitle" } },
-        [_vm._v("Tambah Penggna")]
-      ),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "close",
-          attrs: {
-            type: "button",
-            "data-dismiss": "modal",
-            "aria-label": "Close",
-          },
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "modal",
+          "aria-label": "Close",
         },
-        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
-      ),
-    ])
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
   },
 ]
 render._withStripped = true
